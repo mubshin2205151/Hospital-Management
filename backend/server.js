@@ -50,7 +50,7 @@ app.use(session({
   }
 }));
 
-// ✅ 4. Debug middleware — ADD THIS HERE
+// 4. Debug middleware — ADD THIS HERE
 app.use((req, res, next) => {
   console.log("Session:", req.session);
   next();
@@ -85,30 +85,7 @@ app.post("/person", async (req, res) => {
   }
 });
 
-app.get('/view-hospital-records', async (req, res) => {
-  try {
-    const result = await pool.query(`
-      SELECT 
-        hr.record_id,
-        hr.patient_id,
-        per.name AS patient_name,
-        hr.admission_date,
-        hr.discharge_date,
-        hr.disease,
-        b.total_charge
-      FROM hospital_record hr
-      JOIN patient pat ON hr.patient_id = pat.patient_id
-      JOIN person per ON pat.patient_id = per.id
-      JOIN bill b ON hr.bill_id = b.bill_id
-      ORDER BY hr.record_id DESC;
-    `);
-    console.log('got resule'+result.rows);
-    res.json(result.rows);
-  } catch (err) {
-    console.error('Error fetching hospital records:', err);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
+
 
 // add employee
 app.post("/employee", async (req, res) => {
@@ -1194,19 +1171,36 @@ app.post('/add-hospital-record', async (req, res) => {
 // });
 
 
+app.get('/view-hospital-records', async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT 
+        hr.record_id,
+        hr.patient_id,
+        per.name AS patient_name,
+        hr.admission_date,
+        hr.discharge_date,
+        hr.disease,
+        b.total_charge
+      FROM hospital_record hr
+      JOIN patient pat ON hr.patient_id = pat.patient_id
+      JOIN person per ON pat.patient_id = per.id
+      JOIN bill b ON hr.bill_id = b.bill_id
+      ORDER BY hr.record_id DESC;
+    `);
+    console.log('got resule'+result.rows);
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Error fetching hospital records:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
 app.post('/cashier-login', async (req, res) => {
   const { name, password } = req.body;
-  console.log(" Received login POST for:", name, password);  // DEBUG
-
-  if (!name || !password) {
-    console.warn(" Missing name or password");
-    return res.status(400).send('Missing credentials');
-  }
 
   const expectedPassword = name.toLowerCase().split(' ')[0];
-  const expectedEmail = `${expectedPassword}@gmail.com`;
-  console.log("  Expected password:", expectedPassword, "| Expected email:", expectedEmail);  // DEBUG
-
   try {
     const result = await pool.query(`
       SELECT p.id, p.name
@@ -1216,27 +1210,17 @@ app.post('/cashier-login', async (req, res) => {
       WHERE LOWER(p.name) = $1
     `, [name.toLowerCase()]);
 
-    console.log("  Query result:", result.rows);  // DEBUG
-
-    if (result.rows.length === 0) {
-      console.warn(" No matching cashier found");
+    if (result.rows.length === 0 || expectedPassword !== password.toLowerCase()) {
       return res.status(401).send('Invalid credentials');
     }
 
-    if (expectedPassword !== password.toLowerCase()) {
-      console.warn("  Password mismatch");
-      return res.status(401).send('Invalid credentials');
-    }
-
-    console.log(" Login successful for:", name);
-    return res.status(200).send('Login successful');
+    const user = result.rows[0];
+    return res.status(200).json({ id: user.id, name: user.name }); 
   } catch (err) {
-    console.error(" DB error:", err);
+    console.error("DB error:", err);
     return res.status(500).send('Server error');
   }
 });
-
-
 
 
 

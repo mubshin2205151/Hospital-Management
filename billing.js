@@ -1,5 +1,16 @@
+
+// billing.js
 document.addEventListener('DOMContentLoaded', () => {
   const patientSelect = document.getElementById('patient');
+
+  // ✅ Autofill cashier ID from sessionStorage
+  const cashierId = sessionStorage.getItem('cashierId');
+  if (!cashierId) {
+    alert('You must be logged in as a cashier');
+    window.location.href = 'cashier_login.html';
+    return;
+  }
+  document.getElementById('cashier_id').value = cashierId;
 
   fetch('http://localhost:3000/patients')
     .then(res => res.json())
@@ -61,11 +72,4 @@ document.addEventListener('DOMContentLoaded', () => {
         alert('Error generating bill');
       });
   });
-});
-
-
-document.querySelectorAll("nav a").forEach(link => {
-  if (link.href === window.location.href) {
-    link.classList.add("active");
-  }
 });

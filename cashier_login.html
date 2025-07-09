@@ -1,15 +1,16 @@
+
+
+<!-- cashier_login.html -->
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <title>Cashier Login</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <title>Cashier Login</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-    <nav>
-        <a href="index.html">Home</a> |
+  <nav>
+    <a href="index.html">Home</a> |
         <a href="patient_registration.html">Register Patient</a> |
         <a href="patients_list.html">View Patients</a> |
         <a href="doctor_registration.html">Register Doctor</a> |
@@ -18,55 +19,48 @@
         <a href="view_appointments.html">View Appointments</a> |
         <a href="add_prescription.html">Add Prescription</a> |
         <a href="view_prescriptions.html">View Prescriptions</a> |
-        <a href="billing.html">Generate Bill</a> |
-        <a href="view_bills.html">View Bills</a> |
         <a href="cashier_login.html">Cashier Login</a>
-    </nav>
+  </nav>
 
-    <h2>Cashier Login</h2>
-    <form id="loginForm">
-        <label for="name">Name:</label>
-        <input type="text" id="name" required>
-        <label for="password">Password:</label>
-        <input type="password" id="password" required>
-        <button type="submit">Login</button>
-    </form>
+  <h2>Cashier Login</h2>
+  <form id="loginForm">
+    <label for="name">Name:</label>
+    <input type="text" id="name" required>
+    <label for="password">Password:</label>
+    <input type="password" id="password" required>
+    <button type="submit">Login</button>
+  </form>
 
-    <p id="loginError" style="color:red;"></p>
+  <p id="loginError" style="color:red;"></p>
 
-    <script>
-        document.getElementById('loginForm').addEventListener('submit', async function (e) {
-            e.preventDefault();
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
 
-            const name = document.getElementById('name').value;
-            const password = document.getElementById('password').value;
+      const name = document.getElementById('name').value;
+      const password = document.getElementById('password').value;
 
-            console.log(" Attempting login with:", name, password);  // DEBUG
-
-            try {
-                const res = await fetch('http://localhost:3000/cashier-login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, password })
-                });
-
-                console.log("  Response status:", res.status);  // DEBUG
-
-                if (res.ok) {
-                    console.log(" Login successful. Redirecting...");
-                    window.location.href = 'cashier_dashboard.html';
-                } else {
-                    const errText = await res.text();
-                    console.error("  Login failed:", errText);
-                    alert('Login failed: ' + errText);
-                }
-            } catch (err) {
-                console.error(" Fetch error:", err);
-                alert('Network error during login');
-            }
+      try {
+        const res = await fetch('http://localhost:3000/cashier-login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, password })
         });
 
-    </script>
+        if (res.ok) {
+          const data = await res.json();  // 👈 extract id + name
+          sessionStorage.setItem('cashierId', data.id);  // 👈 store for later use
+          sessionStorage.setItem('cashierName', data.name);
+          window.location.href = 'cashier_dashboard.html';
+        } else {
+          const errText = await res.text();
+          alert('Login failed: ' + errText);
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Network error during login');
+      }
+    });
+  </script>
 </body>
-
 </html>
