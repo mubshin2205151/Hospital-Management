@@ -109,7 +109,7 @@
         let records = [];
 
         async function loadHospitalRecords() {console.log("Hello")
-            const res = await fetch('/view-hospital-records');
+            const res = await fetch('http://localhost:3000/view-hospital-records');
             console.log("Hello2")
             records = await res.json();
             console.log("Hello3")
