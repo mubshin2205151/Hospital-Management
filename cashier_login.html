@@ -24,7 +24,7 @@
     </nav>
 
     <h2>Cashier Login</h2>
-    <form id="cashierLoginForm">
+    <form id="loginForm">
         <label for="name">Name:</label>
         <input type="text" id="name" required>
         <label for="password">Password:</label>
@@ -44,7 +44,7 @@
             console.log(" Attempting login with:", name, password);  // DEBUG
 
             try {
-                const res = await fetch('/cashier-login', {
+                const res = await fetch('http://localhost:3000/cashier-login', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ name, password })
