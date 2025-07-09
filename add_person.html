@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Add Person</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <h2>Register Person</h2>
+  <form id="personForm">
+    <label>ID:</label>
+    <input type="number" id="id" required>
+
+    <label>Name:</label>
+    <input type="text" id="name" required>
+
+    <label>Phone No:</label>
+    <input type="text" id="phone_no" required>
+
+    <label>Age:</label>
+    <input type="number" id="age" required>
+
+    <label>Blood Group:</label>
+    <select id="blood_group" required>
+      <option value="A+">A+</option>
+      <option value="A-">A-</option>
+      <option value="B+">B+</option>
+      <option value="B-">B-</option>
+      <option value="AB+">AB+</option>
+      <option value="AB-">AB-</option>
+      <option value="O+">O+</option>
+      <option value="O-">O-</option>
+    </select>
+
+    <label>Person Type:</label>
+    <select id="person_type" required>
+      <option value="admin">Admin</option>
+      <option value="employee">Employee</option>
+      <option value="patient">Patient</option>
+    </select>
+
+    <button type="submit">Submit</button>
+  </form>
+
+  <script src="add_person.js"></script>
+</body>
+</html>

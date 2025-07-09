@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>View Prescriptions</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <nav>
+    <a href="index.html">Home</a> |
+    <a href="patient_registration.html">Register Patient</a> |
+    <a href="patients_list.html">View Patients</a> |
+    <a href="doctor_registration.html">Register Doctor</a> |
+    <a href="doctor_login.html">Doctor Login</a> |
+    <a href="appointment_booking.html">Book Appointment</a> |
+    <a href="view_appointments.html">View Appointments</a> |
+    <a href="add_prescription.html">Add Prescription</a> |
+    <a href="view_prescriptions.html">View Prescriptions</a> |
+    <a href="billing.html">Generate Bill</a> |
+    <a href="view_bills.html">View Bills</a>
+  </nav>
+  <hr>
+
+  <h2>Prescriptions & Tests</h2>
+
+  <div style="margin-bottom: 20px;">
+    <label for="searchType">Search by:</label>
+    <select id="searchType">
+      <option value="appointment_id">Appointment ID</option>
+      <option value="prescription_date">Prescription Date</option>
+      <option value="test_name">Test Name</option>
+    </select>
+
+    <input type="text" id="searchInput" placeholder="Enter search term">
+    <button id="searchBtn">Search</button>
+  </div>
+
+  <table border="1" id="prescriptionsTable">
+    <thead>
+      <tr>
+        <th>Appointment ID</th>
+        <th>Prescription Date</th>
+        <th>Test Name</th>
+        <th>Test Cost</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Prescriptions will go here -->
+    </tbody>
+  </table>
+
+  <script src="view_prescriptions.js"></script>
+</body>
+
+</html>

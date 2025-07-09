@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Patients List</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <nav>
+    <a href="index.html">Home</a> |
+    <a href="patient_registration.html">Register Patient</a> |
+    <a href="patients_list.html">View Patients</a> |
+    <a href="doctor_registration.html">Register Doctor</a> |
+    <a href="doctor_login.html">Doctor Login</a> |
+    <a href="appointment_booking.html">Book Appointment</a> |
+    <a href="view_appointments.html">View Appointments</a> |
+    <a href="add_prescription.html">Add Prescription</a> |
+    <a href="view_prescriptions.html">View Prescriptions</a> |
+    <a href="billing.html">Generate Bill</a> |
+    <a href="view_bills.html">View Bills</a>
+  </nav>
+  <hr>
+  
+  <h2>Registered Patients</h2>
+
+  <div>
+    <label for="searchType">Search by:</label>
+    <select id="searchType">
+      <option value="id">ID</option>
+      <option value="name">Name</option>
+      <option value="blood_group">Blood Group</option>
+      <option value="patient_type">Patient Type</option>
+    </select>
+
+    <input type="text" id="searchInput" placeholder="Enter search value">
+    <button onclick="searchPatients()">Search</button>
+    <button onclick="loadAllPatients()">Reset</button>
+  </div>
+
+  <table border="1" id="patientsTable">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Phone</th>
+        <th>Age</th>
+        <th>Blood Group</th>
+        <th>Patient Type</th>
+        <th>Residence Cost</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Data will be injected here -->
+    </tbody>
+  </table>
+
+  <script src="patients_list.js"></script>
+</body>
+</html>

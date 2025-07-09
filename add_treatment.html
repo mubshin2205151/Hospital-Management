@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Add Treatment</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <nav>
+    <a href="index.html">Home</a> |
+    <a href="add_diagnosis.html">Add Diagnosis</a> |
+    <a href="add_treatment.html">Add Treatment</a>
+  </nav>
+  <hr>
+
+  <h2>Add Treatment</h2>
+  <form id="treatmentForm">
+    <label for="diagnosis">Select Diagnosis:</label>
+    <select id="diagnosis" required></select>
+
+    <label for="type">Treatment Type:</label>
+    <input type="text" id="type" required>
+
+    <label for="cost">Treatment Cost:</label>
+    <input type="number" id="cost" required>
+
+    <button type="submit">Submit Treatment</button>
+  </form>
+
+  <script src="add_treatment.js"></script>
+</body>
+</html>

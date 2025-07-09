@@ -1,0 +1,112 @@
+1.Get all patients
+SELECT 
+p.id,
+p.name,
+p.phone_no,
+p.age,
+p.blood_group,
+pt.patient_type,
+rp.residence_cost
+FROM person p
+JOIN patient pt ON pt.patient_id = p.id
+LEFT JOIN resident_patient rp ON rp.patient_id = pt.patient_id
+
+
+2.Get doctors list
+SELECT d.doctor_id, d.department_id, d.email, p.name
+FROM doctor d
+JOIN employee e ON d.doctor_id = e.employee_id
+JOIN person p ON e.employee_id = p.id
+
+
+3.Get all prescription
+SELECT 
+p.prescription_id, p.appointment_id, p.prescription_date,
+t.test_id, t.test_name, t.test_cost, t.test_date
+FROM prescription p
+LEFT JOIN test t ON p.prescription_id = t.prescription_id
+ORDER BY p.prescription_id
+
+
+4.Get all appointments
+SELECT 
+a.appointment_id,
+a.appointment_date,
+a.appointment_charge,
+patient_person.name AS patient_name,
+doctor_person.name AS doctor_name,
+d.email AS doctor_email,
+dept.department_name
+FROM appointment a
+JOIN patient pt ON pt.patient_id = a.patient_id
+JOIN person patient_person ON patient_person.id = pt.patient_id
+JOIN doctor d ON d.doctor_id = a.doctor_id
+JOIN employee e ON d.doctor_id = e.employee_id
+JOIN person doctor_person ON doctor_person.id = e.employee_id
+JOIN department dept ON d.department_id = dept.department_id
+
+
+5.Get bills
+SELECT 
+b.bill_id,
+b.residence_charge,
+b.medicine_charge,
+b.treatment_charge,
+b.test_charge,
+b.total_charge,
+p.name AS patient_name
+FROM bill b
+JOIN patient pt ON pt.patient_id = b.patient_id
+JOIN person p ON p.id = pt.patient_id
+ORDER BY b.bill_id DESC
+
+
+6.Patient Search(Base Query)
+SELECT p.id, p.name, p.phone_no, p.age, p.blood_group::text AS blood_group, pt.patient_type::text AS patient_type
+FROM person p
+JOIN patient pt ON p.id = pt.patient_id
+
+
+7.Appointment Search(Base Query)
+SELECT 
+    a.appointment_id,
+    a.appointment_date,
+    a.appointment_charge,
+    p.name AS patient_name,
+    dp.department_name,
+    per.name AS doctor_name,
+    d.email AS doctor_email
+FROM appointment a
+JOIN patient pt ON pt.patient_id = a.patient_id
+JOIN person p ON p.id = pt.patient_id
+JOIN doctor d ON d.doctor_id = a.doctor_id
+JOIN department dp ON dp.department_id = d.department_id
+JOIN employee e ON e.employee_id = d.doctor_id
+JOIN person per ON per.id = e.employee_id
+
+
+8.Prescription Search(Base Query)
+SELECT 
+    p.prescription_id,
+    p.appointment_id,
+    p.prescription_date,
+    t.test_id,
+    t.test_name,
+    t.test_cost,
+    t.test_date
+FROM prescription p
+LEFT JOIN test t ON p.prescription_id = t.prescription_id
+
+
+9.Bill Search(Base Query)
+SELECT 
+    b.bill_id,
+    b.residence_charge,
+    b.medicine_charge,
+    b.treatment_charge,
+    b.test_charge,
+    b.total_charge,
+    p.name AS patient_name
+FROM bill b
+JOIN patient pt ON pt.patient_id = b.patient_id
+JOIN person p ON p.id = pt.patient_id

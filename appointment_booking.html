@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Book Appointment</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <nav>
+      <a href="index.html">Home</a> |
+      <a href="patient_registration.html">Register Patient</a> |
+      <a href="patients_list.html">View Patients</a> |
+      <a href="doctor_registration.html">Register Doctor</a> |
+      <a href="doctor_login.html">Doctor Login</a> |
+      <a href="appointment_booking.html">Book Appointment</a> |
+      <a href="view_appointments.html">View Appointments</a> |
+      <a href="add_prescription.html">Add Prescription</a> |
+      <a href="view_prescriptions.html">View Prescriptions</a> |
+      <a href="billing.html">Generate Bill</a> |
+      <a href="view_bills.html">View Bills</a>
+    </nav>
+    <hr />
+
+    <h2>Book Appointment</h2>
+    <form id="appointmentForm">
+      <label for="patient">Select Patient:</label>
+      <select id="patient" required></select>
+
+      <label for="doctor">Select Doctor:</label>
+      <select id="doctor" required></select>
+
+      <label for="date">Appointment Date:</label>
+      <input type="date" id="date" required />
+
+      <label for="appointment_id">Appointment ID:</label>
+      <input type="number" id="appointment_id" required />
+
+      <label for="appointment_charge">Appointment Charge:</label>
+      <input type="number" id="appointment_charge" required />
+
+      <button type="submit">Book Appointment</button>
+    </form>
+
+    <script src="appointment_booking.js"></script>
+  </body>
+</html>

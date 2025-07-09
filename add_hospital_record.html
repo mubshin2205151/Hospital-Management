@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Add Hospital Record</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+</head>
+
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="btn btn-outline-light ml-2" href="admin_dashboard.html">Admin Home</a>
+
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#adminNavbar"
+            aria-controls="adminNavbar" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="adminNavbar">
+            <ul class="navbar-nav ml-3">
+
+                <!-- Insert Employee Dropdown -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="insertEmployeeDropdown" role="button"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Insert Employee
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="insertEmployeeDropdown">
+                        <a class="dropdown-item" href="insert_doctor.html">Doctor</a>
+                        <a class="dropdown-item" href="insert_nurse.html">Nurse</a>
+                        <a class="dropdown-item" href="insert_cashier.html">Cashier</a>
+                    </div>
+                </li>
+
+                <!-- Remove Employee Dropdown -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="removeEmployeeDropdown" role="button"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Remove Employee
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="removeEmployeeDropdown">
+                        <a class="dropdown-item" href="remove_doctor.html">Doctor</a>
+                        <a class="dropdown-item" href="remove_nurse.html">Nurse</a>
+                        <a class="dropdown-item" href="remove_cashier.html">Cashier</a>
+                    </div>
+                </li>
+
+                <!-- Update Employee Dropdown -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="updateEmployeeDropdown" role="button"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Update Employee
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="updateEmployeeDropdown">
+                        <a class="dropdown-item" href="update_doctor.html">Doctor</a>
+                        <a class="dropdown-item" href="update_nurse.html">Nurse</a>
+                        <a class="dropdown-item" href="update_cashier.html">Cashier</a>
+                    </div>
+                </li>
+
+                <!-- Hospital Record -->
+                <li class="nav-item">
+                    <a class="nav-link" href="add_hospital_record.html">Add Hospital Record</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="view_hospital_record.html">View Hospital Record</a>
+                </li>
+
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <h3>Add Hospital Record</h3>
+        <form id="addRecordForm">
+            <div class="form-group">
+                <label>Patient ID</label>
+                <input type="number" class="form-control" id="patient_id" required>
+            </div>
+            <div class="form-group">
+                <label>Admission Date</label>
+                <input type="date" class="form-control" id="admission_date" required>
+            </div>
+            <div class="form-group">
+                <label>Discharge Date</label>
+                <input type="date" class="form-control" id="discharge_date" required>
+            </div>
+            <div class="form-group">
+                <label>Disease</label>
+                <input type="text" class="form-control" id="disease" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Add Record</button>
+            <p class="mt-3 text-success" id="add_result"></p>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById("addRecordForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const res = await fetch("/add-hospital-record", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    patient_id: document.getElementById("patient_id").value,
+                    admission_date: document.getElementById("admission_date").value,
+                    discharge_date: document.getElementById("discharge_date").value,
+                    disease: document.getElementById("disease").value
+                })
+            });
+            const data = await res.json();
+            document.getElementById("add_result").textContent = data.message;
+        });
+    </script>
+
+</body>
+
+</html>

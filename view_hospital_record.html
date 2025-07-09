@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>View Hospital Records</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+    <style>
+        #searchInput {
+            max-width: 300px;
+        }
+    </style>
+</head>
+
+<body>
+
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="btn btn-outline-light ml-2" href="admin_dashboard.html">Admin Home</a>
+
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#adminNavbar"
+            aria-controls="adminNavbar" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="adminNavbar">
+            <ul class="navbar-nav ml-3">
+
+                <!-- Insert Employee Dropdown -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="insertEmployeeDropdown" role="button"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Insert Employee
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="insertEmployeeDropdown">
+                        <a class="dropdown-item" href="insert_doctor.html">Doctor</a>
+                        <a class="dropdown-item" href="insert_nurse.html">Nurse</a>
+                        <a class="dropdown-item" href="insert_cashier.html">Cashier</a>
+                    </div>
+                </li>
+
+                <!-- Remove Employee Dropdown -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="removeEmployeeDropdown" role="button"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Remove Employee
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="removeEmployeeDropdown">
+                        <a class="dropdown-item" href="remove_doctor.html">Doctor</a>
+                        <a class="dropdown-item" href="remove_nurse.html">Nurse</a>
+                        <a class="dropdown-item" href="remove_cashier.html">Cashier</a>
+                    </div>
+                </li>
+
+                <!-- Update Employee Dropdown -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="updateEmployeeDropdown" role="button"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Update Employee
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="updateEmployeeDropdown">
+                        <a class="dropdown-item" href="update_doctor.html">Doctor</a>
+                        <a class="dropdown-item" href="update_nurse.html">Nurse</a>
+                        <a class="dropdown-item" href="update_cashier.html">Cashier</a>
+                    </div>
+                </li>
+
+                <!-- Hospital Record -->
+                <li class="nav-item">
+                    <a class="nav-link" href="add_hospital_record.html">Add Hospital Record</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="view_hospital_record.html">View Hospital Record</a>
+                </li>
+
+            </ul>
+        </div>
+    </nav>
+
+
+    <div class="container mt-4">
+        <h3>All Hospital Records</h3>
+
+        <div class="form-group">
+            <input type="text" id="searchInput" class="form-control" placeholder="Search by Patient Name">
+        </div>
+
+        <div id="records_table_container">
+            <table class="table table-bordered" id="recordsTable">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Record ID</th>
+                        <th>Patient ID</th>
+                        <th>Patient Name</th>
+                        <th>Admission Date</th>
+                        <th>Discharge Date</th>
+                        <th>Disease</th>
+                        <th>Total Charge</th>
+                    </tr>
+                </thead>
+                <tbody id="recordsBody">
+                    <!-- Records will go here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        let records = [];
+
+        async function loadHospitalRecords() {console.log("Hello")
+            const res = await fetch('/view-hospital-records');
+            console.log("Hello2")
+            records = await res.json();
+            console.log("Hello3")
+            displayRecords(records);
+        }
+
+        function displayRecords(data) {
+            const tbody = document.getElementById("recordsBody");
+            tbody.innerHTML = "";
+            if (data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="text-danger text-center">No records found</td></tr>`;
+                return;
+            }
+
+            for (const rec of data) {
+                const row = `
+          <tr>
+            <td>${rec.record_id}</td>
+            <td>${rec.patient_id}</td>
+            <td>${rec.patient_name}</td>
+            <td>${rec.admission_date}</td>
+            <td>${rec.discharge_date}</td>
+            <td>${rec.disease}</td>
+            <td>${rec.total_charge}</td>
+          </tr>
+        `;
+                tbody.innerHTML += row;
+            }
+        }
+
+        // Filter records by patient name
+        document.getElementById("searchInput").addEventListener("input", function () {
+            const keyword = this.value.toLowerCase();
+            const filtered = records.filter(r =>
+                r.patient_name.toLowerCase().includes(keyword)
+            );
+            displayRecords(filtered);
+        });
+
+        // Load records initially
+        loadHospitalRecords();
+    </script>
+
+</body>
+
+</html>

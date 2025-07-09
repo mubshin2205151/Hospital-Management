@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Add Diagnosis</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <nav>
+    <a href="index.html">Home</a> |
+    <a href="add_diagnosis.html">Add Diagnosis</a> |
+    <a href="add_treatment.html">Add Treatment</a>
+  </nav>
+  <hr>
+
+  <h2>Add Diagnosis</h2>
+  <form id="diagnosisForm">
+    <label for="test">Select Test:</label>
+    <select id="test" required></select>
+
+    <label for="result">Diagnosis Result:</label>
+    <input type="text" id="result" required>
+
+    <button type="submit">Submit Diagnosis</button>
+  </form>
+
+  <script src="add_diagnosis.js"></script>
+</body>
+</html>
