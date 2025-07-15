@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>View Prescriptions</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <nav>
+    <a href="patient_dashboard.html">Home</a> |
+    <a href="appointment_booking.html">Book Appointment</a> |
+    <a href="patient_view_appointments.html">View My Appointments</a> |
+    <a href="patient_view_prescriptions.html">View Prescription</a> |
+    <a href="patient_view_diagnosis.html">View Diagnosis</a> |
+    <a href="patient_view_treatment.html">View Treatment</a> |
+    <a href="patient_view_bills.html">View Bill</a> |
+    <a href="patient_buy_medicine.html">Buy Medicine</a> |
+    <a href="patient_view_buys.html">View Buys</a>
+  </nav>
+  <hr />
+
+  <h2>My Prescriptions</h2>
+  <table border="1" id="prescriptionTable">
+    <thead>
+      <tr>
+        <th>Prescription ID</th>
+        <th>Date</th>
+        <th>Doctor</th>
+        <th>Appointment ID</th>
+        <th>Test Name</th>
+        <th>Test Cost</th>
+        <th>Test Date</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    const patient = JSON.parse(sessionStorage.getItem("loggedInPatient"));
+    if (!patient) {
+      alert("You must log in as a patient.");
+      window.location.href = "patient_login.html";
+    }
+
+    function logout() {
+      sessionStorage.removeItem("loggedInPatient");
+    }
+
+    fetch(`http://localhost:3000/patient-prescriptions?email=${encodeURIComponent(patient.name.toLowerCase().split(" ")[0] + "@gmail.com")}`)
+      .then(res => res.json())
+      .then(data => {
+        const tbody = document.querySelector("#prescriptionTable tbody");
+        if (data.length === 0) {
+          const row = tbody.insertRow();
+          const cell = row.insertCell();
+          cell.colSpan = 7;
+          cell.textContent = "No prescriptions found.";
+          return;
+        }
+
+        data.forEach(prescription => {
+          const row = tbody.insertRow();
+          row.insertCell().textContent = prescription.prescription_id;
+          row.insertCell().textContent = prescription.prescription_date;
+          row.insertCell().textContent = prescription.doctor_name;
+          row.insertCell().textContent = prescription.appointment_id;
+          row.insertCell().textContent = prescription.test_name;
+          row.insertCell().textContent = prescription.test_cost;
+          row.insertCell().textContent = prescription.test_date;
+        });
+      })
+      .catch(err => {
+        console.error("Error fetching prescriptions:", err);
+        alert("Failed to load prescriptions.");
+      });
+  </script>
+</body>
+</html>

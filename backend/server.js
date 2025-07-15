@@ -137,6 +137,20 @@ app.post("/resident_patient", async (req, res) => {
   }
 });
 
+// Get next available patient ID
+app.get("/next_patient_id", async (req, res) => {
+  try {
+    const result = await pool.query("SELECT MAX(patient_id) as max_id FROM patient");
+    const maxId = result.rows[0].max_id || 0;
+    const newId = maxId + 1;
+    res.json({ new_id: newId });
+  } catch (err) {
+    console.error("Error getting next patient ID:", err);
+    res.status(500).send("Failed to determine next patient ID");
+  }
+});
+
+
 //Get all patients
 app.get("/patients", async (req, res) => {
   try {
@@ -204,7 +218,7 @@ app.get("/doctors", async (req, res) => {
       JOIN person p ON e.employee_id = p.id
     `);
 
-    console.log("Doctor API Response:", result.rows); 
+    console.log("Doctor API Response:", result.rows);
 
     res.json(result.rows);
   } catch (err) {
@@ -345,7 +359,7 @@ app.post("/diagnosis", async (req, res) => {
     const resultInsert = await pool.query(
       `INSERT INTO diagnosis (test_id, result)
        VALUES ($1, $2)
-       RETURNING *`,  
+       RETURNING *`,
       [test_id, result]
     );
 
@@ -732,7 +746,7 @@ app.get("/bills/search", async (req, res) => {
   }
 });
 
- 
+
 
 app.post("/admin-login", async (req, res) => {
   const { email, password } = req.body;
@@ -1124,7 +1138,7 @@ app.get("/get-nurses", async (req, res) => {
     res.status(500).send("Failed to fetch nurses");
   }
 });
- 
+
 
 app.post("/update-nurse", async (req, res) => {
   const admin = req.session.admin;
@@ -1251,7 +1265,7 @@ app.get('/view-hospital-records', async (req, res) => {
       JOIN bill b ON hr.bill_id = b.bill_id
       ORDER BY hr.record_id DESC;
     `);
-    console.log('got resule'+result.rows);
+    console.log('got resule' + result.rows);
     res.json(result.rows);
   } catch (err) {
     console.error('Error fetching hospital records:', err);
@@ -1278,7 +1292,7 @@ app.post('/cashier-login', async (req, res) => {
     }
 
     const user = result.rows[0];
-    return res.status(200).json({ id: user.id, name: user.name }); 
+    return res.status(200).json({ id: user.id, name: user.name });
   } catch (err) {
     console.error("DB error:", err);
     return res.status(500).send('Server error');
@@ -1346,6 +1360,293 @@ app.get("/doctor-treatments", async (req, res) => {
   } catch (err) {
     console.error("Error fetching doctor treatments:", err);
     res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// GET next appointment ID
+app.get("/appointments/next-id", async (req, res) => {
+  try {
+    const result = await pool.query("SELECT MAX(appointment_id) AS max_id FROM appointment");
+    const next_id = (result.rows[0].max_id || 0) + 1;
+    res.json({ next_id });
+  } catch (err) {
+    console.error("Error fetching next appointment ID:", err);
+    res.status(500).send("Failed to generate appointment ID");
+  }
+});
+
+app.get("/patient-appointments", async (req, res) => {
+  const { email } = req.query;
+
+  if (!email) {
+    return res.status(400).send("Email is required");
+  }
+
+  // Extract name from email (e.g. rakib@gmail.com → rakib)
+  const baseName = email.split("@")[0].toLowerCase();
+
+  try {
+    // Step 1: Get matching patient id from name
+    const personResult = await pool.query(
+      `SELECT id, name FROM person WHERE LOWER(SPLIT_PART(name, ' ', 1)) = $1 AND person_type = 'patient'`,
+      [baseName]
+    );
+
+    if (personResult.rows.length === 0) {
+      return res.status(404).send("Patient not found");
+    }
+
+    const patient_id = personResult.rows[0].id;
+
+    // Step 2: Get appointment details
+    const appointmentsResult = await pool.query(`
+      SELECT 
+        a.appointment_id,
+        a.appointment_date,
+        a.appointment_charge,
+        p.name AS doctor_name,
+        dept.department_name
+      FROM appointment a
+      JOIN doctor d ON a.doctor_id = d.doctor_id
+      JOIN employee e ON d.doctor_id = e.employee_id
+      JOIN person p ON e.employee_id = p.id
+      LEFT JOIN department dept ON d.department_id = dept.department_id
+      WHERE a.patient_id = $1
+      ORDER BY a.appointment_date DESC
+    `, [patient_id]);
+
+
+    res.json(appointmentsResult.rows);
+
+  } catch (err) {
+    console.error("Error fetching patient appointments:", err);
+    res.status(500).send("Internal server error");
+  }
+});
+
+app.get("/patient-prescriptions", async (req, res) => {
+  const { email } = req.query;
+
+  try {
+    // Get patient ID from email
+    const prefix = email.split("@")[0];
+    const personResult = await pool.query(
+      "SELECT id FROM person WHERE LOWER(SPLIT_PART(name, ' ', 1)) = $1 AND person_type = 'patient'",
+      [prefix]
+    );
+    if (personResult.rows.length === 0) return res.json([]);
+
+    const patient_id = personResult.rows[0].id;
+
+    const result = await pool.query(`
+      SELECT 
+        pr.prescription_id,
+        pr.prescription_date,
+        pr.appointment_id,
+        t.test_name,
+        t.test_cost,
+        t.test_date,
+        p.name AS doctor_name
+      FROM prescription pr
+      JOIN test t ON pr.prescription_id = t.prescription_id
+      JOIN appointment a ON pr.appointment_id = a.appointment_id
+      JOIN doctor d ON a.doctor_id = d.doctor_id
+      JOIN employee e ON d.doctor_id = e.employee_id
+      JOIN person p ON e.employee_id = p.id
+      WHERE a.patient_id = $1
+      ORDER BY pr.prescription_date DESC
+    `, [patient_id]);
+
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Error fetching patient prescriptions:", err);
+    res.status(500).send("Failed to load prescriptions");
+  }
+});
+
+
+app.get("/patient-diagnosis", async (req, res) => {
+  const { email } = req.query;
+
+  try {
+    const prefix = email.split("@")[0];
+    const personResult = await pool.query(
+      "SELECT id FROM person WHERE LOWER(SPLIT_PART(name, ' ', 1)) = $1 AND person_type = 'patient'",
+      [prefix]
+    );
+    if (personResult.rows.length === 0) return res.json([]);
+
+    const patient_id = personResult.rows[0].id;
+
+    const result = await pool.query(`
+      SELECT 
+        d.diagnosis_id,
+        d.result,
+        t.test_name,
+        t.test_date AS diagnosis_date,
+        pr.prescription_date,
+        a.appointment_id,
+        a.appointment_date,
+        per.name AS doctor_name
+      FROM diagnosis d
+      JOIN test t ON d.test_id = t.test_id
+      JOIN prescription pr ON t.prescription_id = pr.prescription_id
+      JOIN appointment a ON pr.appointment_id = a.appointment_id
+      JOIN doctor doc ON a.doctor_id = doc.doctor_id
+      JOIN person per ON doc.doctor_id = per.id
+      WHERE a.patient_id = $1
+      ORDER BY a.appointment_date DESC
+    `, [patient_id]);
+
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Error fetching patient diagnosis:", err);
+    res.status(500).send("Failed to load diagnosis");
+  }
+});
+
+
+
+
+app.get("/patient-treatments", async (req, res) => {
+  const { email } = req.query;
+
+  try {
+    const prefix = email.split("@")[0];
+    const personResult = await pool.query(
+      "SELECT id FROM person WHERE LOWER(SPLIT_PART(name, ' ', 1)) = $1 AND person_type = 'patient'",
+      [prefix]
+    );
+    if (personResult.rows.length === 0) return res.json([]);
+
+    const patient_id = personResult.rows[0].id;
+
+    const result = await pool.query(`
+      SELECT
+        t.treatment_id,
+        t.treatment_type,
+        t.treatment_cost,
+        d.diagnosis_id,
+        d.result,
+        doc_person.name AS doctor_name,
+        a.appointment_date
+      FROM treatment t
+      JOIN diagnosis d ON t.diagnosis_id = d.diagnosis_id
+      JOIN test te ON d.test_id = te.test_id
+      JOIN prescription pr ON te.prescription_id = pr.prescription_id
+      JOIN appointment a ON pr.appointment_id = a.appointment_id
+      JOIN doctor doc ON a.doctor_id = doc.doctor_id
+      JOIN person doc_person ON doc.doctor_id = doc_person.id
+      WHERE a.patient_id = $1
+      ORDER BY a.appointment_date DESC
+    `, [patient_id]);
+
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Error fetching patient treatments:", err);
+    res.status(500).send("Failed to load treatments");
+  }
+});
+
+
+app.get("/patient-bills", async (req, res) => {
+  const { email } = req.query;
+
+  try {
+    const prefix = email.split("@")[0];
+    const personResult = await pool.query(
+      "SELECT id FROM person WHERE LOWER(SPLIT_PART(name, ' ', 1)) = $1 AND person_type = 'patient'",
+      [prefix]
+    );
+    if (personResult.rows.length === 0) return res.json([]);
+
+    const patient_id = personResult.rows[0].id;
+
+    const billsResult = await pool.query(`
+      SELECT
+        b.bill_id,
+        b.test_charge,
+        b.medicine_charge,
+        b.appointment_charge,
+        b.residence_charge,
+        b.treatment_charge,
+        b.total_charge,
+        p.name AS cashier_name
+      FROM bill b
+      JOIN cashier c ON b.cashier_id = c.cashier_id
+      JOIN employee e ON c.cashier_id = e.employee_id
+      JOIN person p ON e.employee_id = p.id
+      WHERE b.patient_id = $1
+      ORDER BY b.bill_id DESC
+    `, [patient_id]);
+
+    res.json(billsResult.rows);
+  } catch (err) {
+    console.error("Error fetching patient bills:", err);
+    res.status(500).send("Failed to load bills");
+  }
+});
+
+// GET all drugs
+app.get("/drugs", async (req, res) => {
+  try {
+    const result = await pool.query("SELECT drug_id, name, price FROM drug ORDER BY name");
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Failed to load drugs");
+  }
+});
+
+// POST to record a new purchase or update existing
+app.post("/buys", async (req, res) => {
+  const { patient_id, drug_id, amount, buy_date } = req.body;
+
+  try {
+    // Check if a buy record exists
+    const existing = await pool.query(
+      "SELECT amount FROM buys WHERE patient_id = $1 AND drug_id = $2",
+      [patient_id, drug_id]
+    );
+
+    if (existing.rows.length > 0) {
+      // Update amount and buy_date (overwrite buy_date for simplicity)
+      await pool.query(
+        "UPDATE buys SET amount = amount + $3, buy_date = $4 WHERE patient_id = $1 AND drug_id = $2",
+        [patient_id, drug_id, amount, buy_date]
+      );
+    } else {
+      // Insert new record
+      await pool.query(
+        "INSERT INTO buys (patient_id, drug_id, amount, buy_date) VALUES ($1, $2, $3, $4)",
+        [patient_id, drug_id, amount, buy_date]
+      );
+    }
+
+    res.status(201).send("Purchase recorded");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Failed to record purchase");
+  }
+});
+
+// GET all buys for a patient (joined with drug info)
+app.get("/patient-buys", async (req, res) => {
+  const { patient_id } = req.query;
+
+  try {
+    const result = await pool.query(`
+      SELECT d.name, d.price, b.amount 
+      FROM buys b
+      JOIN drug d ON b.drug_id = d.drug_id
+      WHERE b.patient_id = $1
+      ORDER BY d.name
+    `, [patient_id]);
+
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Failed to load purchases");
   }
 });
 

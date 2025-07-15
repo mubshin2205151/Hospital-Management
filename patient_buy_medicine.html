@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Buy Medicine</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    table { border-collapse: collapse; width: 80%; margin: auto; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+    input[type=number] { width: 60px; }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="patient_dashboard.html">Home</a> |
+    <a href="appointment_booking.html">Book Appointment</a> |
+    <a href="patient_view_appointments.html">View My Appointments</a> |
+    <a href="patient_view_prescriptions.html">View Prescription</a> |
+    <a href="patient_view_diagnosis.html">View Diagnosis</a> |
+    <a href="patient_view_treatment.html">View Treatment</a> |
+    <a href="patient_view_bills.html">View Bill</a> |
+    <a href="patient_buy_medicine.html">Buy Medicine</a> |
+    <a href="patient_view_buys.html">View Buys</a>
+  </nav>
+  <hr>
+
+  <h2>Buy Medicine</h2>
+
+  <table id="medicinesTable">
+    <thead>
+      <tr>
+        <th>Medicine Name</th>
+        <th>Price (per unit)</th>
+        <th>Quantity</th>
+        <th>Buy</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    const patient = JSON.parse(sessionStorage.getItem("loggedInPatient"));
+    if (!patient) {
+      alert("Please login first");
+      window.location.href = "patient_login.html";
+    }
+
+    function logout() {
+      sessionStorage.removeItem("loggedInPatient");
+    }
+
+    const tbody = document.querySelector("#medicinesTable tbody");
+
+    // Load all drugs
+    fetch("http://localhost:3000/drugs")
+      .then(res => res.json())
+      .then(drugs => {
+        drugs.forEach(drug => {
+          const row = tbody.insertRow();
+          row.insertCell().textContent = drug.name;
+          row.insertCell().textContent = drug.price.toFixed(2);
+          const qtyCell = row.insertCell();
+          const qtyInput = document.createElement("input");
+          qtyInput.type = "number";
+          qtyInput.min = "1";
+          qtyInput.value = "1";
+          qtyCell.appendChild(qtyInput);
+
+          const buyCell = row.insertCell();
+          const buyBtn = document.createElement("button");
+          buyBtn.textContent = "Buy";
+          buyBtn.onclick = () => {
+            const quantity = parseInt(qtyInput.value);
+            if (isNaN(quantity) || quantity <= 0) {
+              alert("Enter a valid quantity");
+              return;
+            }
+
+            // POST buy request
+            fetch("http://localhost:3000/buys", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                patient_id: patient.id,
+                drug_id: drug.drug_id,
+                amount: quantity,
+                buy_date: new Date().toISOString().split('T')[0] // YYYY-MM-DD
+              })
+            })
+            .then(res => {
+              if (!res.ok) throw new Error("Failed to record purchase");
+              alert(`Purchased ${quantity} of ${drug.name}`);
+            })
+            .catch(err => {
+              console.error(err);
+              alert("Error buying medicine");
+            });
+          };
+          buyCell.appendChild(buyBtn);
+        });
+      })
+      .catch(err => {
+        console.error(err);
+        alert("Failed to load medicines");
+      });
+  </script>
+</body>
+</html>

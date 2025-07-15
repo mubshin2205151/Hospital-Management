@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>View My Medicine Buys</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    table { border-collapse: collapse; width: 80%; margin: auto; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+    tfoot { font-weight: bold; }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="patient_dashboard.html">Home</a> |
+    <a href="appointment_booking.html">Book Appointment</a> |
+    <a href="patient_view_appointments.html">View My Appointments</a> |
+    <a href="patient_view_prescriptions.html">View Prescription</a> |
+    <a href="patient_view_diagnosis.html">View Diagnosis</a> |
+    <a href="patient_view_treatment.html">View Treatment</a> |
+    <a href="patient_view_bills.html">View Bill</a> |
+    <a href="patient_buy_medicine.html">Buy Medicine</a> |
+    <a href="patient_view_buys.html">View Buys</a>
+  </nav>
+  <hr>
+
+  <h2>My Medicine Purchases</h2>
+
+  <table id="buysTable">
+    <thead>
+      <tr>
+        <th>Medicine Name</th>
+        <th>Quantity Bought</th>
+        <th>Price (per unit)</th>
+        <th>Total Cost</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+    <tfoot>
+      <tr>
+        <td colspan="3">Total Amount Spent</td>
+        <td id="totalSpent">0.00</td>
+      </tr>
+    </tfoot>
+  </table>
+
+  <script>
+    const patient = JSON.parse(sessionStorage.getItem("loggedInPatient"));
+    if (!patient) {
+      alert("Please login first");
+      window.location.href = "patient_login.html";
+    }
+
+    function logout() {
+      sessionStorage.removeItem("loggedInPatient");
+    }
+
+    fetch(`http://localhost:3000/patient-buys?patient_id=${patient.id}`)
+      .then(res => res.json())
+      .then(buys => {
+        const tbody = document.querySelector("#buysTable tbody");
+        let totalSpent = 0;
+
+        if (buys.length === 0) {
+          const row = tbody.insertRow();
+          const cell = row.insertCell();
+          cell.colSpan = 4;
+          cell.textContent = "No purchases found.";
+          return;
+        }
+
+        buys.forEach(buy => {
+          const row = tbody.insertRow();
+          row.insertCell().textContent = buy.name;
+          row.insertCell().textContent = buy.amount;
+          row.insertCell().textContent = buy.price.toFixed(2);
+          const cost = buy.amount * buy.price;
+          row.insertCell().textContent = cost.toFixed(2);
+          totalSpent += cost;
+        });
+
+        document.getElementById("totalSpent").textContent = totalSpent.toFixed(2);
+      })
+      .catch(err => {
+        console.error(err);
+        alert("Failed to load purchases");
+      });
+  </script>
+</body>
+</html>

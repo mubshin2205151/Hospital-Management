@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>View Treatments</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <nav>
+    <a href="patient_dashboard.html">Home</a> |
+    <a href="appointment_booking.html">Book Appointment</a> |
+    <a href="patient_view_appointments.html">View My Appointments</a> |
+    <a href="patient_view_prescriptions.html">View Prescription</a> |
+    <a href="patient_view_diagnosis.html">View Diagnosis</a> |
+    <a href="patient_view_treatment.html">View Treatment</a> |
+    <a href="patient_view_bills.html">View Bill</a> |
+    <a href="patient_buy_medicine.html">Buy Medicine</a> |
+    <a href="patient_view_buys.html">View Buys</a>
+  </nav>
+  <hr />
+
+  <h2>My Treatments</h2>
+  <table border="1" id="treatmentTable">
+    <thead>
+      <tr>
+        <th>Treatment ID</th>
+        <th>Treatment Type</th>
+        <th>Treatment Cost</th>
+        <th>Diagnosis ID</th>
+        <th>Diagnosis Result</th>
+        <th>Doctor</th>
+        <th>Treatment Date</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    const patient = JSON.parse(sessionStorage.getItem("loggedInPatient"));
+    if (!patient) {
+      alert("You must log in as a patient.");
+      window.location.href = "patient_login.html";
+    }
+
+    function logout() {
+      sessionStorage.removeItem("loggedInPatient");
+    }
+
+    fetch(`http://localhost:3000/patient-treatments?email=${encodeURIComponent(patient.name.toLowerCase().split(" ")[0] + "@gmail.com")}`)
+      .then(res => res.json())
+      .then(data => {
+        const tbody = document.querySelector("#treatmentTable tbody");
+        if (data.length === 0) {
+          const row = tbody.insertRow();
+          const cell = row.insertCell();
+          cell.colSpan = 7;
+          cell.textContent = "No treatments found.";
+          return;
+        }
+
+        data.forEach(treatment => {
+          const row = tbody.insertRow();
+          row.insertCell().textContent = treatment.treatment_id;
+          row.insertCell().textContent = treatment.treatment_type;
+          row.insertCell().textContent = treatment.treatment_cost;
+          row.insertCell().textContent = treatment.diagnosis_id;
+          row.insertCell().textContent = treatment.result;
+          row.insertCell().textContent = treatment.doctor_name;
+          row.insertCell().textContent = treatment.treatment_date || "N/A";
+        });
+      })
+      .catch(err => {
+        console.error("Error fetching treatments:", err);
+        alert("Failed to load treatments.");
+      });
+  </script>
+</body>
+</html>

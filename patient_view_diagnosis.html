@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>View Diagnosis</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <nav>
+    <a href="patient_dashboard.html">Home</a> |
+    <a href="appointment_booking.html">Book Appointment</a> |
+    <a href="patient_view_appointments.html">View My Appointments</a> |
+    <a href="patient_view_prescriptions.html">View Prescription</a> |
+    <a href="patient_view_diagnosis.html">View Diagnosis</a> |
+    <a href="patient_view_treatment.html">View Treatment</a> |
+    <a href="patient_view_bills.html">View Bill</a> |
+    <a href="patient_buy_medicine.html">Buy Medicine</a> |
+    <a href="patient_view_buys.html">View Buys</a>
+  </nav>
+  <hr />
+
+  <h2>My Diagnoses</h2>
+  <table border="1" id="diagnosisTable">
+    <thead>
+      <tr>
+        <th>Diagnosis ID</th>
+        <th>Test Name</th>
+        <th>Diagnosis Result</th>
+        <th>Diagnosis Date</th>
+        <th>Doctor</th>
+        <th>Appointment ID</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    const patient = JSON.parse(sessionStorage.getItem("loggedInPatient"));
+    if (!patient) {
+      alert("You must log in as a patient.");
+      window.location.href = "patient_login.html";
+    }
+
+    function logout() {
+      sessionStorage.removeItem("loggedInPatient");
+    }
+
+    fetch(`http://localhost:3000/patient-diagnosis?email=${encodeURIComponent(patient.name.toLowerCase().split(" ")[0] + "@gmail.com")}`)
+      .then(res => res.json())
+      .then(data => {
+        const tbody = document.querySelector("#diagnosisTable tbody");
+        if (data.length === 0) {
+          const row = tbody.insertRow();
+          const cell = row.insertCell();
+          cell.colSpan = 6;
+          cell.textContent = "No diagnoses found.";
+          return;
+        }
+
+        data.forEach(diagnosis => {
+          const row = tbody.insertRow();
+          row.insertCell().textContent = diagnosis.diagnosis_id;
+          row.insertCell().textContent = diagnosis.test_name;
+          row.insertCell().textContent = diagnosis.result;
+          row.insertCell().textContent = diagnosis.diagnosis_date;
+          row.insertCell().textContent = diagnosis.doctor_name;
+          row.insertCell().textContent = diagnosis.appointment_id;
+        });
+      })
+      .catch(err => {
+        console.error("Error fetching diagnoses:", err);
+        alert("Failed to load diagnoses.");
+      });
+  </script>
+</body>
+</html>

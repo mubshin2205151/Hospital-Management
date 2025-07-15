@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Patient Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    nav {
+      margin-bottom: 20px;
+    }
+    .logout-btn {
+      float: right;
+      background-color: #f44336;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    .logout-btn:hover {
+      background-color: #d32f2f;
+    }
+    h2 {
+      display: inline;
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <h2>Patient Dashboard</h2>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+    <hr />
+    <a href="patient_dashboard.html">Home</a> |
+    <a href="appointment_booking.html">Book Appointment</a> |
+    <a href="patient_view_appointments.html">View My Appointments</a> |
+    <a href="patient_view_prescriptions.html">View Prescription</a> |
+    <a href="patient_view_diagnosis.html">View Diagnosis</a> |
+    <a href="patient_view_treatment.html">View Treatment</a> |
+    <a href="patient_view_bills.html">View Bill</a> |
+    <a href="patient_buy_medicine.html">Buy Medicine</a> |
+    <a href="patient_view_buys.html">View Buys</a>
+  </nav>
+
+  <div id="welcomeMsg"></div>
+
+  <script>
+    const patient = JSON.parse(sessionStorage.getItem("loggedInPatient"));
+    if (!patient) {
+      alert("You must login as a patient to view this page.");
+      window.location.href = "patient_login.html";
+    } else {
+      document.getElementById("welcomeMsg").innerHTML =
+        `<p>Welcome, <strong>${patient.name}</strong> (Patient ID: ${patient.id})</p>`;
+    }
+
+    function logout() {
+      sessionStorage.removeItem("loggedInPatient");
+      window.location.href = "patient_login.html";
+    }
+  </script>
+</body>
+</html>

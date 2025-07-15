@@ -6,71 +6,58 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <nav>
-    <a href="index.html">Home</a> |
-    <a href="patient_registration.html">Register Patient</a> |
-    <a href="patients_list.html">View Patients</a> |
-    <a href="doctor_registration.html">Register Doctor</a> |
-    <a href="doctor_login.html">Doctor Login</a> |
-    <a href="appointment_booking.html">Book Appointment</a> |
-    <a href="view_appointments.html">View Appointments</a> |
-    <a href="add_prescription.html">Add Prescription</a> |
-    <a href="view_prescriptions.html">View Prescriptions</a> |
-    <a href="cashier_login.html">Cashier Login</a>
-  </nav>
+  
   <hr>
 
   <h2>Register Patient</h2>
   <form id="patientForm">
-    <label>Patient ID:</label>
-    <input type="number" id="id" required>
+  <label>Name:</label>
+  <input type="text" id="name" required>
 
-    <label>Name:</label>
-    <input type="text" id="name" required>
+  <label>Phone No:</label>
+  <input type="text" id="phone" required>
 
-    <label>Phone No:</label>
-    <input type="text" id="phone" required>
+  <label>Age:</label>
+  <input type="number" id="age" required>
 
-    <label>Age:</label>
-    <input type="number" id="age" required>
+  <label>Blood Group:</label>
+  <select id="blood" required>
+    <option value="A+">A+</option><option value="A-">A-</option>
+    <option value="B+">B+</option><option value="B-">B-</option>
+    <option value="AB+">AB+</option><option value="AB-">AB-</option>
+    <option value="O+">O+</option><option value="O-">O-</option>
+  </select>
 
-    <label>Blood Group:</label>
-    <select id="blood" required>
-      <option value="A+">A+</option><option value="A-">A-</option>
-      <option value="B+">B+</option><option value="B-">B-</option>
-      <option value="AB+">AB+</option><option value="AB-">AB-</option>
-      <option value="O+">O+</option><option value="O-">O-</option>
+  <label>Patient Type:</label>
+  <select id="patient_type" required>
+    <option value="resident">Resident</option>
+    <option value="outpatient">Outpatient</option>
+  </select>
+
+  <div id="residentSection" style="display: none;">
+    <label>Unit No:</label>
+    <input type="number" id="unit_no">
+
+    <label>Residence Type:</label>
+    <select id="residence_type">
+      <option value="ward">Ward</option>
+      <option value="cabin">Cabin</option>
+      <option value="icu">ICU</option>
     </select>
 
-    <label>Patient Type:</label>
-    <select id="patient_type" required>
-      <option value="resident">Resident</option>
-      <option value="outpatient">Outpatient</option>
-    </select>
+    <label>Department ID:</label>
+    <input type="number" id="department_id">
 
-    <div id="residentSection" style="display: none;">
-      <label>Unit No:</label>
-      <input type="number" id="unit_no">
+    <label>Day Count:</label>
+    <input type="number" id="day_count">
 
-      <label>Residence Type:</label>
-      <select id="residence_type">
-        <option value="ward">Ward</option>
-        <option value="cabin">Cabin</option>
-        <option value="icu">ICU</option>
-      </select>
+    <label>Residence Cost:</label>
+    <input type="number" id="residence_cost">
+  </div>
 
-      <label>Department ID:</label>
-      <input type="number" id="department_id">
+  <button type="submit">Register</button>
+</form>
 
-      <label>Day Count:</label>
-      <input type="number" id="day_count">
-
-      <label>Residence Cost:</label>
-      <input type="number" id="residence_cost">
-    </div>
-
-    <button type="submit">Register</button>
-  </form>
 
   <script src="patient_registration.js"></script>
 </body>
