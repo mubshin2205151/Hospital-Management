@@ -1,164 +1,203 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Atlas Hospital Management System</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
-  <style>
-    body {
-      font-family: 'Poppins', sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: #f5f9ff;
-      color: #333;
-    }
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Atlas HMS</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f9ff;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
 
-    header {
-      background-color: #2a5bd7;
-      color: white;
-      padding: 20px 40px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-    }
+        header {
+            background-color: #2a5bd7;
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+        }
 
-    .logo-section {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-    }
+        .logo {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
 
-    .logo-section img {
-      height: 50px;
-      width: auto;
-      border-radius: 6px;
-      background: white;
-      padding: 3px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    }
+        nav.navbar {
+            background-color: #1a3a8f;
+        }
 
-    .logo-title {
-      font-size: 2em;
-      font-weight: bold;
-      margin: 0;
-    }
+        nav.navbar .nav-link {
+            color: white !important;
+            margin-right: 15px;
+        }
 
-    .tagline {
-      font-size: 0.95em;
-      margin: 5px 0 0 0;
-    }
+        nav.navbar .nav-link:hover {
+            background-color: #274bb3;
+            border-radius: 4px;
+        }
 
-    nav {
-      background-color: #1a3a8f;
-      padding: 10px 0;
-    }
+        .hero {
+            text-align: center;
+            padding: 50px 20px;
+            background: linear-gradient(135deg, #2a5bd7, #4facfe);
+            color: white;
+        }
 
-    .nav-content {
-      display: flex;
-      justify-content: center;
-      gap: 15px;
-      flex-wrap: wrap;
-      padding: 0 20px;
-    }
+        .why-us {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
 
-    .nav-links a {
-      color: white;
-      text-decoration: none;
-      font-weight: 500;
-      padding: 8px 14px;
-      border-radius: 5px;
-      background-color: transparent;
-      transition: background 0.2s, transform 0.2s;
-    }
+        .logo-image {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
 
-    .nav-links a:hover {
-      background-color: #274bb3;
-      transform: scale(1.05);
-    }
+        .logo-image img {
+            width: 150px;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
 
-    .hero {
-      text-align: center;
-      padding: 60px 20px;
-      background: linear-gradient(135deg, #2a5bd7, #4facfe);
-      color: white;
-    }
+        .section {
+            padding: 40px 20px;
+        }
 
-    .hero h1 {
-      font-size: 2.5em;
-      margin-bottom: 15px;
-    }
+        .section h2 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
 
-    .hero p {
-      font-size: 1.2em;
-    }
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+        }
 
-    .why-us {
-      max-width: 800px;
-      margin: 40px auto;
-      padding: 30px;
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
-    }
+        .card-dept,
+        .card-doc {
+            background: white;
+            padding: 16px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
 
-    .why-us h2 {
-      margin-bottom: 15px;
-      color: #1a3a8f;
-    }
+        .card-doc img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 10px;
+        }
 
-    footer {
-      text-align: center;
-      padding: 20px;
-      background-color: #1a3a8f;
-      color: white;
-      font-size: 0.9em;
-    }
-  </style>
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #1a3a8f;
+            color: white;
+        }
+    </style>
 </head>
+
 <body>
 
-  <header>
-    <div class="logo-section">
-      <img src="HMS.jpg" alt="Atlas HMS Logo" />
-      <div>
-        <div class="logo-title">Atlas HMS</div>
-        <div class="tagline">Supporting Your Health Journey</div>
-      </div>
-    </div>
-  </header>
+    <header>
+        <div class="logo">ATLAS</div>
+        <p>Supporting Your Health Journey</p>
+    </header>
 
-  <nav>
-    <div class="nav-content nav-links">
-      <a href="home_page.html">Home</a>
-      <a href="index.html">Admin Login</a>
-      <a href="doctor_login.html">Doctor Login</a>
-      <a href="cashier_login.html">Cashier Login</a>
-      <a href="patient_login.html">Patient Login</a>
-    </div>
-  </nav>
+    <nav class="navbar navbar-expand-sm">
+        <div class="container">
+            <a class="navbar-brand text-white" href="home_page.html">Home</a>
+            <div class="navbar-nav">
+                <a class="nav-link" href="index.html">Admin Login</a>
+                <a class="nav-link" href="doctor_login.html">Doctor Login</a>
+                <a class="nav-link" href="cashier_login.html">Cashier Login</a>
+                <a class="nav-link" href="patient_login.html">Patient Login</a>
+            </div>
+        </div>
+    </nav>
 
-  <section class="hero">
-    <h1>Advanced Healthcare Management</h1>
-    <p>Streamlined. Secure. Patient-Centric.</p>
-  </section>
+    <section class="hero">
+        <h1>Advanced Healthcare Management</h1>
+        <p>Streamlined. Secure. Patient-Centric.</p>
+    </section>
 
-  <section class="why-us">
-    <h2>Why Choose Atlas HMS?</h2>
-    <p>
-      Atlas Hospital Management System combines cutting-edge technology with compassionate care
-      to revolutionize your healthcare experience. Our platform offers seamless appointment scheduling,
-      real-time patient records, and AI-driven diagnostics—all designed to save time and improve outcomes.
-      With 24/7 support, military-grade data security, and a user-friendly interface, we empower hospitals
-      to focus on what matters most: <strong>you</strong>. Join the future of healthcare with Atlas,
-      where innovation meets reliability.
-    </p>
-  </section>
+    <section class="why-us">
+        <h2>Why Choose Atlas HMS?</h2>
+        <p>
+            Atlas Hospital Management System combines cutting-edge technology with compassionate care to revolutionize
+            your healthcare experience. Our platform offers seamless appointment scheduling, real-time patient records,
+            and AI-driven diagnostics—all designed to save time and improve outcomes. With 24/7 support, military-grade
+            data security, and a user-friendly interface, we empower hospitals to focus on what matters most:
+            <strong>you</strong>. Join the future of healthcare with Atlas, where innovation meets reliability.
+        </p>
+        <div class="logo-image">
+            <img src="HMS.jpg" alt="Atlas HMS Logo">
+        </div>
+    </section>
 
-  <footer>
-    &copy; 2024 Atlas HMS. All rights reserved.
-  </footer>
+    <section class="section container">
+        <h2>Our Departments</h2>
+        <div id="departments" class="cards-container"></div>
+    </section>
+
+    <section class="section container">
+        <h2>Our Doctors</h2>
+        <div id="doctors" class="cards-container"></div>
+    </section>
+
+    <footer>
+        &copy; 2025 Atlas HMS. All rights reserved.
+    </footer>
+
+    <script>
+        // Fetch departments
+        fetch('http://localhost:3000/departments')
+            .then(res => res.json())
+            .then(depts => {
+                const container = document.getElementById('departments');
+                depts.forEach(d => {
+                    const card = document.createElement('div');
+                    card.className = 'card-dept';
+                    card.innerHTML = `<h5>${d.department_name}</h5>`;
+                    container.appendChild(card);
+                });
+            });
+
+        // Fetch doctors
+        fetch('http://localhost:3000/doctors')
+            .then(res => res.json())
+            .then(drs => {
+                const con = document.getElementById('doctors');
+                drs.forEach(d => {
+                    const c = document.createElement('div');
+                    c.className = 'card-doc';
+                    c.innerHTML = `
+        <img src="doctor.jpg" alt="${d.name}">
+        <h5>${d.name}</h5>
+        <p><strong>Dept:</strong> ${d.department_name}</p>
+        <p><strong>Email:</strong> ${d.email}</p>`;
+                    con.appendChild(c);
+                });
+            });
+
+    </script>
 
 </body>
+
 </html>

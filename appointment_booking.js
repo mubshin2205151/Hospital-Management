@@ -31,10 +31,11 @@ document.addEventListener('DOMContentLoaded', () => {
       doctors.forEach(doctor => {
         const option = document.createElement("option");
         option.value = doctor.doctor_id;
-        option.textContent = `Dr. ${doctor.name} (Dept ${doctor.department_id})`;
+        option.textContent = `Dr. ${doctor.name} (Dept: ${doctor.department_name})`;
         doctorSelect.appendChild(option);
       });
     });
+
 
   // Submit form
   document.getElementById('appointmentForm').addEventListener('submit', e => {

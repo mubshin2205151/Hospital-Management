@@ -212,20 +212,38 @@ app.post("/doctor", async (req, res) => {
 app.get("/doctors", async (req, res) => {
   try {
     const result = await pool.query(`
-      SELECT d.doctor_id, d.department_id, d.email, d.password, p.name
+      SELECT 
+        d.doctor_id, 
+        dept.department_name, 
+        d.email, 
+        d.password, 
+        p.name
       FROM doctor d
+      JOIN department dept ON d.department_id = dept.department_id
       JOIN employee e ON d.doctor_id = e.employee_id
       JOIN person p ON e.employee_id = p.id
+      ORDER BY d.doctor_id
     `);
 
     console.log("Doctor API Response:", result.rows);
-
     res.json(result.rows);
   } catch (err) {
     console.error("Error fetching list of doctors:", err);
     res.status(501).send("Error fetching doctors list");
   }
 });
+
+
+app.get("/departments", async (req, res) => {
+  try {
+    const result = await pool.query("SELECT department_name FROM department ORDER BY department_id");
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Error fetching departments:", err);
+    res.status(500).send("Failed to fetch departments");
+  }
+});
+
 
 
 //posting appointments
