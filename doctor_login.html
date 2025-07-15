@@ -7,30 +7,33 @@
 </head>
 <body>
   <nav>
-    <a href="index.html">Home</a> |
-    <a href="patient_registration.html">Register Patient</a> |
+    <a href="home_page.html">Home</a>
+    <a href="index.html">Admin Login</a> |
+    <!-- <a href="patient_registration.html">Register Patient</a> |
     <a href="patients_list.html">View Patients</a> |
-    <a href="doctor_registration.html">Register Doctor</a> |
+    <a href="doctor_registration.html">Register Doctor</a> | -->
     <a href="doctor_login.html">Doctor Login</a> |
-    <a href="appointment_booking.html">Book Appointment</a> |
+    <!-- <a href="appointment_booking.html">Book Appointment</a> |
     <a href="view_appointments.html">View Appointments</a> |
     <a href="add_prescription.html">Add Prescription</a> |
-    <a href="view_prescriptions.html">View Prescriptions</a> |
-    <a href="cashier_login.html">Cashier Login</a>
+    <a href="view_prescriptions.html">View Prescriptions</a> | -->
+    <a href="cashier_login.html">Cashier Login</a> |
+    <a href="patient_login.html">Patient Login</a>
   </nav>
   <hr>
   
   <h2>Doctor Login</h2>
-  <form id="loginForm">
-    <label for="email">Email:</label>
-    <input type="email" id="email" required>
+  <div class="card">
+    <form id="loginForm">
+      <label for="email">Email:</label>
+      <input type="email" id="email" required>
 
-    <label for="password">Password:</label>
-    <input type="password" id="password" required>
+      <label for="password">Password:</label>
+      <input type="password" id="password" required>
 
-    <button type="submit">Login</button>
-  </form>
-
+      <button type="submit">Login</button>
+    </form>
+  </div>
   <script src="doctor_login.js"></script>
 </body>
 </html>

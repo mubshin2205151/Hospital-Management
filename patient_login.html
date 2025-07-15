@@ -34,15 +34,16 @@
 </head>
 <body>
   <nav>
-    <a href="index.html">Home</a> |
-    <a href="patient_registration.html">Register Patient</a> |
+    <a href="home_page.html">Home</a>
+    <a href="index.html">Admin Login</a> |
+    <!-- <a href="patient_registration.html">Register Patient</a> |
     <a href="patients_list.html">View Patients</a> |
-    <a href="doctor_registration.html">Register Doctor</a> |
+    <a href="doctor_registration.html">Register Doctor</a> | -->
     <a href="doctor_login.html">Doctor Login</a> |
-    <a href="appointment_booking.html">Book Appointment</a> |
+    <!-- <a href="appointment_booking.html">Book Appointment</a> |
     <a href="view_appointments.html">View Appointments</a> |
     <a href="add_prescription.html">Add Prescription</a> |
-    <a href="view_prescriptions.html">View Prescriptions</a> |
+    <a href="view_prescriptions.html">View Prescriptions</a> | -->
     <a href="cashier_login.html">Cashier Login</a> |
     <a href="patient_login.html">Patient Login</a>
   </nav>
@@ -102,6 +103,12 @@
           console.error("Login error:", err);
           alert("Failed to login. Please try again.");
         });
+    });
+
+    document.querySelectorAll("nav a").forEach(link => {
+      if (link.href === window.location.href) {
+        link.classList.add("active");
+      }
     });
   </script>
 </body>

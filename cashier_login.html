@@ -10,27 +10,30 @@
 </head>
 <body>
   <nav>
-    <a href="index.html">Home</a> |
-        <a href="patient_registration.html">Register Patient</a> |
-        <a href="patients_list.html">View Patients</a> |
-        <a href="doctor_registration.html">Register Doctor</a> |
-        <a href="doctor_login.html">Doctor Login</a> |
-        <a href="appointment_booking.html">Book Appointment</a> |
-        <a href="view_appointments.html">View Appointments</a> |
-        <a href="add_prescription.html">Add Prescription</a> |
-        <a href="view_prescriptions.html">View Prescriptions</a> |
-        <a href="cashier_login.html">Cashier Login</a>
+    <a href="home_page.html">Home</a>
+    <a href="index.html">Admin Login</a> |
+    <!-- <a href="patient_registration.html">Register Patient</a> |
+    <a href="patients_list.html">View Patients</a> |
+    <a href="doctor_registration.html">Register Doctor</a> | -->
+    <a href="doctor_login.html">Doctor Login</a> |
+    <!-- <a href="appointment_booking.html">Book Appointment</a> |
+    <a href="view_appointments.html">View Appointments</a> |
+    <a href="add_prescription.html">Add Prescription</a> |
+    <a href="view_prescriptions.html">View Prescriptions</a> | -->
+    <a href="cashier_login.html">Cashier Login</a> |
+    <a href="patient_login.html">Patient Login</a>
   </nav>
 
   <h2>Cashier Login</h2>
-  <form id="loginForm">
-    <label for="name">Name:</label>
-    <input type="text" id="name" required>
-    <label for="password">Password:</label>
-    <input type="password" id="password" required>
-    <button type="submit">Login</button>
-  </form>
-
+  <div class="card">
+    <form id="loginForm">
+      <label for="name">Name:</label>
+      <input type="text" id="name" required>
+      <label for="password">Password:</label>
+      <input type="password" id="password" required>
+      <button type="submit">Login</button>
+    </form>
+  </div>
   <p id="loginError" style="color:red;"></p>
 
   <script>
@@ -48,8 +51,8 @@
         });
 
         if (res.ok) {
-          const data = await res.json();  // 👈 extract id + name
-          sessionStorage.setItem('cashierId', data.id);  // 👈 store for later use
+          const data = await res.json();  //  extract id + name
+          sessionStorage.setItem('cashierId', data.id);  //  store for later use
           sessionStorage.setItem('cashierName', data.name);
           window.location.href = 'cashier_dashboard.html';
         } else {
@@ -59,6 +62,12 @@
       } catch (err) {
         console.error(err);
         alert('Network error during login');
+      }
+    });
+
+    document.querySelectorAll("nav a").forEach(link => {
+      if (link.href === window.location.href) {
+        link.classList.add("active");
       }
     });
   </script>
