@@ -1,40 +1,101 @@
-
-
-<!-- cashier_login.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <title>Cashier Login</title>
   <link rel="stylesheet" href="style.css">
+  <style>
+    .login-container {
+      display: flex;
+      width: 80%;
+      max-width: 900px;
+      height: 350px;
+      margin: 30px auto;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .image-placeholder {
+      width: 50%;
+      background-color: #e0e0e0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      color: #555;
+    }
+
+    .card {
+      width: 50%;
+      padding: 30px;
+      background-color: #fff;
+      box-sizing: border-box;
+    }
+
+    .card form {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card label {
+      margin-top: 15px;
+    }
+
+    .card input {
+      padding: 8px;
+      margin-top: 5px;
+    }
+
+    .card button {
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    .card button:hover {
+      background-color: #0056b3;
+    }
+
+    #loginError {
+      margin-top: 10px;
+      color: red;
+      text-align: center;
+    }
+  </style>
 </head>
 <body>
   <nav>
     <a href="home_page.html">Home</a>
     <a href="index.html">Admin Login</a> |
-    <!-- <a href="patient_registration.html">Register Patient</a> |
-    <a href="patients_list.html">View Patients</a> |
-    <a href="doctor_registration.html">Register Doctor</a> | -->
     <a href="doctor_login.html">Doctor Login</a> |
-    <!-- <a href="appointment_booking.html">Book Appointment</a> |
-    <a href="view_appointments.html">View Appointments</a> |
-    <a href="add_prescription.html">Add Prescription</a> |
-    <a href="view_prescriptions.html">View Prescriptions</a> | -->
     <a href="cashier_login.html">Cashier Login</a> |
     <a href="patient_login.html">Patient Login</a>
   </nav>
 
   <h2>Cashier Login</h2>
-  <div class="card">
-    <form id="loginForm">
-      <label for="name">Name:</label>
-      <input type="text" id="name" required>
-      <label for="password">Password:</label>
-      <input type="password" id="password" required>
-      <button type="submit">Login</button>
-    </form>
+
+  <div class="login-container">
+    <div class="image-placeholder">
+      <img src="cashier.jpg" alt="Cashier Login" style="width: 100%; height: 100%; object-fit: cover;">
+    </div>
+
+    <div class="card">
+      <form id="loginForm">
+        <label for="name">Name:</label>
+        <input type="text" id="name" placeholder="Enter cashier name" required>
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" placeholder="Enter password" required>
+
+        <button type="submit">Login</button>
+      </form>
+      <p id="loginError"></p>
+    </div>
   </div>
-  <p id="loginError" style="color:red;"></p>
 
   <script>
     document.getElementById('loginForm').addEventListener('submit', async function (e) {
@@ -51,17 +112,17 @@
         });
 
         if (res.ok) {
-          const data = await res.json();  //  extract id + name
-          sessionStorage.setItem('cashierId', data.id);  //  store for later use
+          const data = await res.json();
+          sessionStorage.setItem('cashierId', data.id);
           sessionStorage.setItem('cashierName', data.name);
           window.location.href = 'cashier_dashboard.html';
         } else {
           const errText = await res.text();
-          alert('Login failed: ' + errText);
+          document.getElementById('loginError').textContent = 'Login failed: ' + errText;
         }
       } catch (err) {
         console.error(err);
-        alert('Network error during login');
+        document.getElementById('loginError').textContent = 'Network error during login';
       }
     });
 

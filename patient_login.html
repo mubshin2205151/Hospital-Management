@@ -5,30 +5,70 @@
   <title>Patient Login</title>
   <link rel="stylesheet" href="style.css">
   <style>
+    .login-container {
+      display: flex;
+      width: 80%;
+      max-width: 900px;
+      height: 350px;
+      margin: 30px auto;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .image-placeholder {
+      width: 50%;
+      background-color: #e0e0e0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      color: #555;
+    }
+
     .card {
-      max-width: 400px;
-      margin: 50px auto;
+      width: 50%;
       padding: 30px;
-      border: 1px solid #ccc;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      background-color: #fff;
+      box-sizing: border-box;
     }
-    .card h2 {
-      text-align: center;
-    }
+
     .card form {
       display: flex;
       flex-direction: column;
     }
-    .card label, .card input {
-      margin-bottom: 10px;
-    }
-    .card button {
-      margin-top: 10px;
-    }
-    .card .link {
-      text-align: center;
+
+    .card label {
       margin-top: 15px;
+    }
+
+    .card input {
+      padding: 8px;
+      margin-top: 5px;
+    }
+
+    .card button {
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    .card button:hover {
+      background-color: #0056b3;
+    }
+
+    .link {
+      margin-top: 15px;
+      text-align: center;
+    }
+
+    #loginError {
+      margin-top: 10px;
+      color: red;
+      text-align: center;
     }
   </style>
 </head>
@@ -36,31 +76,32 @@
   <nav>
     <a href="home_page.html">Home</a>
     <a href="index.html">Admin Login</a> |
-    <!-- <a href="patient_registration.html">Register Patient</a> |
-    <a href="patients_list.html">View Patients</a> |
-    <a href="doctor_registration.html">Register Doctor</a> | -->
     <a href="doctor_login.html">Doctor Login</a> |
-    <!-- <a href="appointment_booking.html">Book Appointment</a> |
-    <a href="view_appointments.html">View Appointments</a> |
-    <a href="add_prescription.html">Add Prescription</a> |
-    <a href="view_prescriptions.html">View Prescriptions</a> | -->
     <a href="cashier_login.html">Cashier Login</a> |
     <a href="patient_login.html">Patient Login</a>
   </nav>
 
-  <div class="card">
-    <h2>Patient Login</h2>
-    <form id="loginForm">
-      <label for="email">Email:</label>
-      <input type="email" id="email" required>
+  <h2>Patient Login</h2>
 
-      <label for="password">Password:</label>
-      <input type="password" id="password" required>
+  <div class="login-container">
+    <div class="image-placeholder">
+      <img src="patient.jpg" alt="Patient Login" style="width: 100%; height: 100%; object-fit: cover;">
+    </div>
 
-      <button type="submit">Login</button>
-    </form>
-    <div class="link">
-      <a href="patient_registration.html">Not registered?</a>
+    <div class="card">
+      <form id="loginForm">
+        <label for="email">Email:</label>
+        <input type="email" id="email" placeholder="Enter your email" required>
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" placeholder="Enter your password" required>
+
+        <button type="submit">Login</button>
+      </form>
+      <div class="link">
+        <a href="patient_registration.html">Not registered?</a>
+      </div>
+      <p id="loginError"></p>
     </div>
   </div>
 
@@ -96,12 +137,12 @@
             alert(`Welcome, ${matched.name}`);
             window.location.href = "patient_dashboard.html";
           } else {
-            alert("Invalid email or password.");
+            document.getElementById("loginError").textContent = "Invalid email or password.";
           }
         })
         .catch(err => {
           console.error("Login error:", err);
-          alert("Failed to login. Please try again.");
+          document.getElementById("loginError").textContent = "Failed to login. Please try again.";
         });
     });
 
