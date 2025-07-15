@@ -1319,6 +1319,35 @@ app.get('/doctor-appointments', async (req, res) => {
 });
 
 
+app.get("/doctor-treatments", async (req, res) => {
+  const doctorEmail = req.query.email;
+  try {
+    const result = await pool.query(`
+      SELECT 
+        t.treatment_id,
+        t.treatment_type,
+        t.treatment_cost,
+        d.result AS diagnosis_result,
+        tst.test_name,
+        per.name AS patient_name
+      FROM treatment t
+      JOIN diagnosis d ON t.diagnosis_id = d.diagnosis_id
+      JOIN test tst ON d.test_id = tst.test_id
+      JOIN prescription p ON tst.prescription_id = p.prescription_id
+      JOIN appointment a ON p.appointment_id = a.appointment_id
+      JOIN patient pt ON a.patient_id = pt.patient_id
+      JOIN person per ON pt.patient_id = per.id
+      JOIN doctor doc ON a.doctor_id = doc.doctor_id
+      WHERE doc.email = $1
+      ORDER BY t.treatment_id DESC
+    `, [doctorEmail]);
+
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Error fetching doctor treatments:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
 
 
 app.listen(PORT, () => {

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Doctor - View Treatments</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <nav>
+    <a href="doctor_dashboard.html">Doctor Home</a> |
+    <a href="doctor_view_appointments.html">View My Appointments</a> |
+    <a href="add_prescription.html">Add Prescription</a> |
+    <a href="add_diagnosis.html">Add Diagnosis</a> |
+    <a href="add_treatment.html">Add Treatment</a> |
+    <a href="doctor_view_treatment.html">View Treatments</a>
+  </nav>
+  <hr />
+
+  <h2>My Prescribed Treatments</h2>
+
+  <table border="1" id="treatmentTable">
+    <thead>
+      <tr>
+        <th>Treatment ID</th>
+        <th>Patient Name</th>
+        <th>Treatment Type</th>
+        <th>Cost</th>
+        <th>Diagnosis Result</th>
+        <th>Test Name</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Rows will be added here -->
+    </tbody>
+  </table>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const doctor = JSON.parse(sessionStorage.getItem("loggedInDoctor"));
+      if (!doctor) {
+        alert("You must login as a doctor to view this page.");
+        window.location.href = "doctor_login.html";
+        return;
+      }
+
+      fetch(`http://localhost:3000/doctor-treatments?email=${encodeURIComponent(doctor.email)}`)
+        .then(res => {
+          if (!res.ok) throw new Error("Failed to load treatments");
+          return res.json();
+        })
+        .then(treatments => {
+          const tbody = document.querySelector("#treatmentTable tbody");
+          if (treatments.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6">No treatments found.</td></tr>`;
+            return;
+          }
+
+          treatments.forEach(t => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+              <td>${t.treatment_id}</td>
+              <td>${t.patient_name}</td>
+              <td>${t.treatment_type}</td>
+              <td>₹${t.treatment_cost}</td>
+              <td>${t.diagnosis_result}</td>
+              <td>${t.test_name}</td>
+            `;
+            tbody.appendChild(row);
+          });
+        })
+        .catch(err => {
+          console.error("Error:", err);
+          alert("Failed to fetch treatments.");
+        });
+    });
+
+    // Highlight nav link
+    document.querySelectorAll("nav a").forEach(link => {
+      if (link.href === window.location.href) {
+        link.classList.add("active");
+      }
+    });
+  </script>
+</body>
+</html>
