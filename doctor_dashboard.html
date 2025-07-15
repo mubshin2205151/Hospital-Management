@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Doctor Dashboard</title>
+    <link rel="stylesheet" href="style.css" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+
+        nav {
+            margin-bottom: 20px;
+        }
+
+        nav a {
+            margin-right: 15px;
+            text-decoration: none;
+            color: #007BFF;
+            font-weight: bold;
+        }
+
+        nav a.active {
+            color: #0056b3;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <nav>
+        <a href="doctor_dashboard.html">Doctor Home</a> |
+        <a href="doctor_view_appointments.html">View My Appointments</a> |
+        <a href="add_prescription.html">Add Prescription</a> |
+        <a href="add_diagnosis.html">Add Diagnosis</a> |
+        <a href="add_treatment.html">Add Treatment</a> |
+        <a href="doctor_login.html" onclick="logout()">Logout</a>
+    </nav>
+
+    <h2>Welcome, Doctor!</h2>
+    <p>This is your personal dashboard. Use the options above to manage your appointments and patient treatments.</p>
+
+    <script>
+        function logout() {
+            sessionStorage.removeItem("loggedInDoctor");
+            // redirect handled by href
+        }
+
+        // Optional: block access if not logged in
+        const doctor = JSON.parse(sessionStorage.getItem("loggedInDoctor"));
+        if (!doctor) {
+            alert("You must login as a doctor to view this page.");
+            window.location.href = "doctor_login.html";
+        }
+
+    </script>
+</body>
+
+</html>

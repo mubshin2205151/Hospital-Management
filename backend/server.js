@@ -177,10 +177,28 @@ app.post("/doctor", async (req, res) => {
 });
 
 //Get doctors list
+// app.get("/doctors", async (req, res) => {
+//   try {
+//     const result = await pool.query(`
+//       SELECT d.doctor_id, d.department_id, d.email, p.name
+//       FROM doctor d
+//       JOIN employee e ON d.doctor_id = e.employee_id
+//       JOIN person p ON e.employee_id = p.id
+//     `);
+
+//     console.log("Doctor API Response:", result.rows); 
+
+//     res.json(result.rows);
+//   } catch (err) {
+//     console.error("Error fetching list of doctors:", err);
+//     res.status(501).send("Error fetching doctors list");
+//   }
+// });
+
 app.get("/doctors", async (req, res) => {
   try {
     const result = await pool.query(`
-      SELECT d.doctor_id, d.department_id, d.email, p.name
+      SELECT d.doctor_id, d.department_id, d.email, d.password, p.name
       FROM doctor d
       JOIN employee e ON d.doctor_id = e.employee_id
       JOIN person p ON e.employee_id = p.id
@@ -194,6 +212,8 @@ app.get("/doctors", async (req, res) => {
     res.status(501).send("Error fetching doctors list");
   }
 });
+
+
 //posting appointments
 app.post("/appointments", async (req, res) => {
   const { appointment_id, patient_id, doctor_id, appointment_date, appointment_charge } = req.body;
@@ -353,20 +373,63 @@ app.post("/treatment", async (req, res) => {
   }
 });
 
-app.get("/tests", async (req, res) => {
+// app.get("/tests", async (req, res) => {
+//   try {
+//     const result = await pool.query("SELECT test_id, test_name FROM test");
+//     res.json(result.rows);
+//   } catch (err) {
+//     console.error("Error fetching tests:", err);
+//     res.status(500).send("Error fetching tests");
+//   }
+// });
+
+app.get('/tests', async (req, res) => {
+  const doctorEmail = req.query.doctor_email;
+
   try {
-    const result = await pool.query("SELECT test_id, test_name FROM test");
+    const result = await pool.query(`
+      SELECT t.test_id, t.test_name
+      FROM test t
+      JOIN prescription p ON t.prescription_id = p.prescription_id
+      JOIN appointment a ON p.appointment_id = a.appointment_id
+      JOIN doctor d ON a.doctor_id = d.doctor_id
+      WHERE d.email = $1
+    `, [doctorEmail]);
+
     res.json(result.rows);
   } catch (err) {
-    console.error("Error fetching tests:", err);
-    res.status(500).send("Error fetching tests");
+    console.error("Error fetching doctor-specific tests:", err);
+    res.status(500).json({ error: "Internal server error" });
   }
 });
 
-app.get("/diagnoses", async (req, res) => {
-  const result = await pool.query("SELECT * FROM diagnosis");
-  res.json(result.rows);
+
+// app.get("/diagnoses", async (req, res) => {
+//   const result = await pool.query("SELECT * FROM diagnosis");
+//   res.json(result.rows);
+// });
+
+app.get('/diagnoses', async (req, res) => {
+  const doctorEmail = req.query.doctor_email;
+
+  try {
+    const result = await pool.query(`
+      SELECT dgn.diagnosis_id, dgn.test_id
+      FROM diagnosis dgn
+      JOIN test t ON dgn.test_id = t.test_id
+      JOIN prescription p ON t.prescription_id = p.prescription_id
+      JOIN appointment a ON p.appointment_id = a.appointment_id
+      JOIN doctor d ON a.doctor_id = d.doctor_id
+      WHERE d.email = $1
+    `, [doctorEmail]);
+
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Error fetching doctor-specific diagnoses:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
 });
+
 
 //Post bills 
 app.post('/bills', async (req, res) => {
@@ -1219,6 +1282,39 @@ app.post('/cashier-login', async (req, res) => {
   } catch (err) {
     console.error("DB error:", err);
     return res.status(500).send('Server error');
+  }
+});
+
+
+// doctor-specific appointments
+app.get('/doctor-appointments', async (req, res) => {
+  const { email } = req.query;
+  console.log("Doctor email received:", email);
+
+  try {
+    const result = await pool.query(
+      `SELECT 
+         a.appointment_id, 
+         a.appointment_date,
+         p.name AS patient_name, 
+         d.email AS doctor_email, 
+         per.name AS doctor_name,
+         dept.department_name AS department_name
+       FROM appointment a
+       JOIN patient pat ON a.patient_id = pat.patient_id
+       JOIN person p ON pat.patient_id = p.id
+       JOIN doctor d ON a.doctor_id = d.doctor_id
+       JOIN person per ON d.doctor_id = per.id
+       JOIN department dept ON d.department_id = dept.department_id
+       WHERE d.email = $1`,
+      [email]
+    );
+
+    console.log("Appointments found:", result.rows.length);
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Error fetching doctor-specific appointments:", err);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 

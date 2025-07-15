@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Doctor's Appointments</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <nav>
+    <a href="doctor_dashboard.html">Doctor Home</a> |
+    <a href="doctor_view_appointments.html">My Appointments</a> |
+    <a href="add_prescription.html">Add Prescription</a> |
+    <a href="add_diagnosis.html">Add Diagnosis</a> |
+    <a href="add_treatment.html">Add Treatment</a> |
+    <a href="doctor_login.html" onclick="sessionStorage.clear()">Logout</a>
+  </nav>
+  <hr />
+  <h2>Appointments for Logged-in Doctor</h2>
+
+  <table border="1" id="appointmentsTable">
+    <thead>
+      <tr>
+        <th>Patient</th>
+        <th>Department</th>
+        <th>Appointment Date</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    const doctor = JSON.parse(sessionStorage.getItem("loggedInDoctor"));
+    if (!doctor) {
+      alert("You must login as a doctor to view this page.");
+      window.location.href = "doctor_login.html";
+    }
+
+    fetch(`http://localhost:3000/doctor-appointments?email=${encodeURIComponent(doctor.email)}`)
+      .then(res => {
+        if (!res.ok) throw new Error("Failed to fetch appointments");
+        return res.json();
+      })
+      .then(appointments => {
+        const tableBody = document.querySelector('#appointmentsTable tbody');
+        tableBody.innerHTML = "";
+
+        if (appointments.length === 0) {
+          tableBody.innerHTML = '<tr><td colspan="3">No appointments found.</td></tr>';
+          return;
+        }
+
+        appointments.forEach(app => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${app.patient_name}</td>
+            <td>${app.department_name}</td>
+            <td>${app.appointment_date}</td>
+          `;
+          tableBody.appendChild(row);
+        });
+      })
+      .catch(err => {
+        console.error("Error:", err);
+        alert("Failed to load appointments");
+      });
+  </script>
+</body>
+</html>
